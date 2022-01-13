@@ -1,44 +1,53 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { capitalizeFirstLetter } from '../../utils/helpers';
 
-function ContactForm() {
+function Nav(props) {
+  const {
+    categories = [],
+    setCurrentCategory,
+    contactSelected,
+    currentCategory,
+    setContactSelected,
+  } = props;
 
-   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
-    const { name, email, message } = formState;
-
-    function handleChange(e) {
-        //The spread operator was used, ...formState, so we can retain the other 
-        //key-value pairs in this object. Without the spread operator, the formState 
-        //object would be overwritten to only contain the name: value key pair.
-        // the [] creates single property names (name, email, message)
-        setFormState({...formState, [e.target.name]: e.target.value })
-      }
-      
-      function handleSubmit(e) {
-        e.preventDefault();
-        console.log(formState);
-      }
-      
-    
-    return (
-        <section>
-            <h1>Contact me</h1>
-            <form id="contact-form" onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="name">Name:</label>
-                    <input type="text" defaultValue={name} onChange={handleChange} name="name" />
-                </div>
-                <div>
-                    <label htmlFor="email">Email address:</label>
-                    <input type="email" defaultValue={email} name="email" onChange={handleChange} />
-                </div>
-                <div>
-                    <label htmlFor="message">Message:</label>
-                    <textarea name="message" defaultValue={message} onChange={handleChange} rows="5" />
-                </div>
-                <button type="submit">Submit</button>
-            </form>
-        </section>
-    )
+  return (
+    <header className="flex-row px-1">
+      <h2>
+        <a data-testid="link" href="/">
+          <span role="img" aria-label="camera"> 📸</span> Oh Snap!
+        </a>
+      </h2>
+      <nav>
+        <ul className="flex-row">
+          <li className="mx-2">
+            <a data-testid="about" href="#about" onClick={() => setContactSelected(false)}>
+              About me
+            </a>
+          </li>
+          <li className={`mx-2 ${contactSelected && 'navActive'}`}>
+            <span onClick={() => setContactSelected(true)}>Contact</span>
+          </li>
+          {categories.map((category) => (
+            <li
+              className={`mx-1 ${
+                currentCategory.name === category.name && !contactSelected && 'navActive'
+                }`}
+              key={category.name}
+            >
+              <span
+                onClick={() => {
+                  setCurrentCategory(category);
+                  setContactSelected(false);
+                }}
+              >
+                {capitalizeFirstLetter(category.name)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </header>
+  );
 }
 
-export default ContactForm;
+export default Nav;
